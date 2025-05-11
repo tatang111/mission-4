@@ -25,7 +25,6 @@ function handleAddTodo(e) {
     let timeRemain;
 
     // For button disabled sebelum semua terisi
-    console.log(priorityList.value)
     if (textList.value.trim() === "" || dateList.value === "" || priorityList.value === "") {
         alert("Isi semua terlebih dahulu ya...😉")
         return;
@@ -33,16 +32,15 @@ function handleAddTodo(e) {
 
     // For Time Remain
     jamTersisa = 24 - dateNow.getHours();
-    hariTersisa = (listDeadline.getMonth() === dateNow.getMonth()) ? listDeadline.getDate() - dateNow.getDate() - 1 : 30 + listDeadline.getDate() - dateNow.getDate() - 1;
-    if (!jamTersisa && !hariTersisa) {
-        timeRemain = `<span class="text-3xl -mt-1 text-red-500 font-[700] border-b-3">OVERDUE</span>`
+    hariTersisa = (listDeadline.getMonth() === dateNow.getMonth()) ? listDeadline.getDate() - (dateNow.getDate() !== listDeadline.getDate() ? dateNow.getDate() : dateNow.getDate() ) : 30 + listDeadline.getDate() - dateNow.getDate() - 1;
+    if (!jamTersisa && !hariTersisa || hariTersisa < 0 ) {
+        timeRemain = `<span class="text-2xl -mt-1 text-red-500 font-[600] border-b-3">OVERDUE</span>`
     } else {
         timeRemain = `<span>Time Remain: ${hariTersisa}h ${jamTersisa}j ${" "}</span>`
     }
 
     // For Awalan
     let list = document.createElement("div");
-    let checkboxValue = document.getElementById("doneList")
     let uniqueID = Date.now();
     list.id = uniqueID;
     list.className = "p-[15px] flex justify-between bg-[#FF9149] w-full rounded-xl flex-col md:flex-row md:h-[50px]";
@@ -136,11 +134,16 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("userJob").innerHTML = jabatan
 
     // Logic time remaining
-    const today = new Date();
+    let today = new Date();
+    let yesterday = new Date(today)
+    yesterday.setDate(today.getDate() - 1)
+
     let maxDate = new Date();
     maxDate.setDate(today.getDate() + 30);
-    let maxDateString = maxDate.toISOString().substring(0, 10)
-    const minDateString = today.toISOString().substring(0, 10);
+    
+    const maxDateString = maxDate.toISOString().substring(0, 10)
+    const minDateString = yesterday.toISOString().substring(0, 10);
+    
     dateList.setAttribute("min", minDateString)
     dateList.setAttribute("max", maxDateString)
 })
